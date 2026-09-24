@@ -32,6 +32,17 @@ Deploy to Cloudflare 會建立部署用 repository、D1 並設定 Workers Builds
 
 ## Cloudflare Access
 
+### 不綁付款方式的應用程式登入
+
+若 Cloudflare Zero Trust Free 在啟用時要求付款方式，也可改用 Worker 內建的密碼登入，不需要啟用 Cloudflare Access。前往 Worker 的 **Settings → Variables and secrets**，建立下列兩個加密 Secret：
+
+- `APP_AUTH_PASSWORD`：私人部署的登入密碼，建議使用密碼管理器產生的長隨機密碼。
+- `APP_AUTH_SECRET`：至少 32 bytes 的隨機簽章金鑰，可用 `openssl rand -hex 32` 產生。
+
+兩者同時存在時，Worker 會優先使用內建登入頁，`TEAM_DOMAIN`、`POLICY_AUD` 與 `POLICY_AUDS` 的暫時值不會參與登入驗證。登入狀態以 Secure、HttpOnly、SameSite=Strict Cookie 保存 30 天。若更換 `APP_AUTH_SECRET`，所有既有登入狀態會立即失效。
+
+此方式只適合單一使用者的私人部署。Worker URL 仍是公開可連線的端點，但未登入的請求無法讀取頁面、靜態資源或 API；請使用高強度密碼，不要與銀行或其他網站共用。
+
 ### 啟用登入保護
 
 1. 前往 **Workers & Pages** 並選擇部署完成的 Worker。
