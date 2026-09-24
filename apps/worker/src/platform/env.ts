@@ -18,6 +18,8 @@ export interface Env {
   TEAM_DOMAIN?: string;
   POLICY_AUD?: string;
   POLICY_AUDS?: string;
+  APP_AUTH_PASSWORD?: string;
+  APP_AUTH_SECRET?: string;
   DEMO_MODE?: string | boolean;
   LOCAL_DEV_MODE?: string | boolean;
   CTBC_API_RELAY_URL?: string;
