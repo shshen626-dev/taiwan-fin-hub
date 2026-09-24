@@ -38,6 +38,12 @@
       "POLICY_AUDS": {
         "description": "多個 Cloudflare Access AUD Tag，使用逗號或空白分隔。部署時先保留 `temporary-placeholder`；只有單一 Access Application 時，部署後請刪除此變數；需要接受多個 Application 時，請改成實際 AUD Tag 清單。"
       },
+      "APP_AUTH_PASSWORD": {
+        "description": "選用的應用程式登入密碼。設定此 Secret 與 APP_AUTH_SECRET 後，會使用內建登入頁取代 Cloudflare Access，適合不綁定付款方式的私人部署。"
+      },
+      "APP_AUTH_SECRET": {
+        "description": "應用程式登入 Cookie 的簽章金鑰；請使用至少 32 bytes 的隨機值，並與 APP_AUTH_PASSWORD 一同設為 Worker Secret。"
+      },
       "DEMO_MODE": {
         "description": "設為 `true`、`1`、`yes` 或 `on` 可啟用公開唯讀 Demo 模式；Demo 模式不需要 `TEAM_DOMAIN`、`POLICY_AUD` 或 `CONFIG_ENCRYPTION_KEY`。"
       },
