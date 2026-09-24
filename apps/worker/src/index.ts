@@ -1,4 +1,5 @@
 import { activityRoutes } from "./features/activity/route";
+import { authRoutes } from "./features/auth/route";
 import { bankCalculationRoutes } from "./features/bank/calculation-route";
 import { bankRoutes } from "./features/bank/route";
 import { classificationRoutes } from "./features/classification/route";
@@ -26,7 +27,6 @@ import { apiErrorResponse, demoReadOnlyMiddleware } from "./platform/http";
 export const app = honoFactory.createApp();
 export const api = honoFactory.createApp();
 
-api.use("*", accessMiddleware);
 api.use("*", demoReadOnlyMiddleware);
 api.use("/connectors/:connectorId/*", connectorContextMiddleware);
 
@@ -47,6 +47,8 @@ api.route("/", syncScheduleRoutes);
 api.route("/", syncRoutes);
 
 api.onError(apiErrorResponse);
+app.route("/", authRoutes);
+app.use("*", accessMiddleware);
 app.route("/api", api);
 app.get("*", async (c) => c.env.ASSETS.fetch(c.req.raw));
 
