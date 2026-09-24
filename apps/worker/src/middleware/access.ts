@@ -1,4 +1,8 @@
 import { verifyAccessIdentity } from "../platform/access-auth";
+import {
+  isAppPasswordAuthConfigured,
+  verifyAppSession,
+} from "../platform/app-auth";
 import type { Env } from "../platform/env";
 import { honoFactory } from "../platform/hono";
 import { isDemoMode } from "../platform/http";
@@ -34,6 +38,27 @@ export const accessMiddleware = honoFactory.createMiddleware(
     if (isDemoMode(c.env) || isLocalDevRequest(c.req.raw, c.env)) {
       await next();
       return;
+    }
+
+    if (isAppPasswordAuthConfigured(c.env)) {
+      if (await verifyAppSession(c.req.raw, c.env)) {
+        await next();
+        return;
+      }
+
+      if (c.req.path.startsWith("/api/")) {
+        return c.json(
+          {
+            success: false,
+            error: { code: "UNAUTHORIZED", message: "請先登入。" },
+          },
+          401,
+        );
+      }
+      if (c.req.method === "GET" || c.req.method === "HEAD") {
+        return c.redirect("/login");
+      }
+      return c.text("Unauthorized", 401);
     }
 
     requireAccessSecrets(c.env);

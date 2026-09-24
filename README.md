@@ -76,6 +76,10 @@ openssl rand -hex 32
 
 ### 步驟二：啟用登入保護
 
+若不想為 Zero Trust Free 綁定付款方式，可改用 Worker 內建的密碼登入：在 Worker 的 **Settings → Variables and secrets** 建立 `APP_AUTH_PASSWORD` 與 `APP_AUTH_SECRET` 兩個加密 Secret。`APP_AUTH_PASSWORD` 請使用高強度私人密碼；`APP_AUTH_SECRET` 可用 `openssl rand -hex 32` 產生。兩者設定完成並重新部署後，開啟 Worker 網址會先顯示登入頁，且不需要啟用 Cloudflare Access。完整注意事項請參考[進階部署與更新](docs/005-deployment.md#不綁付款方式的應用程式登入)。
+
+若要使用 Cloudflare Access：
+
 1. 前往 [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages**，選擇剛建立的 `taiwan-fin-hub`
 2. 開啟 **Domains**，將 Worker URL 的存取模式從 **Public** 改為 **Restricted**
 3. 若沒有 **Domains** 頁籤，請至 **Settings → Domains & Routes**，在 `workers.dev` 網址旁啟用 Cloudflare Access

@@ -43,3 +43,38 @@ describe("local development access", () => {
     ).toBe(false);
   });
 });
+
+describe("application password access", () => {
+  const env = {
+    APP_AUTH_PASSWORD: "test-password",
+    APP_AUTH_SECRET: "test-signing-secret-with-sufficient-length",
+  } as Env;
+
+  it("redirects unauthenticated page requests to login", async () => {
+    const response = await testApp().request(
+      "https://example.com/resource",
+      {},
+      env,
+    );
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get("location")).toBe("/login");
+  });
+
+  it("returns JSON 401 for unauthenticated API requests", async () => {
+    const app = new Hono<AppBindings>();
+    app.use("*", accessMiddleware);
+    app.get("/api/private", (c) => c.json({ private: true }));
+
+    const response = await app.request(
+      "https://example.com/api/private",
+      {},
+      env,
+    );
+
+    expect(response.status).toBe(401);
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: "UNAUTHORIZED" },
+    });
+  });
+});
